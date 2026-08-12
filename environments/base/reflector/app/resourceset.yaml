@@ -50,7 +50,7 @@ spec:
           remediation:
             retries: 3
             remediateLastFailure: true
-      values:
-        configuration:
-          logging:
-            minimumLevel: Debug
+        values:
+          configuration:
+            logging:
+              minimumLevel: Debug
