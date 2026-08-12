@@ -10,13 +10,6 @@ metadata:
     fluxcd.controlplane.io/force: "true"
 spec:
   inputs:
-    - team: application
-      environment: staging
-      cpu: "2"
-      memory: "4Gi"
-      cpuLimit: "4"
-      memoryLimit: "8Gi"
-      maxPods: "20"
     - team: demo
       environment: staging
       cpu: "1"
