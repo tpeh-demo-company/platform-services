@@ -11,4 +11,5 @@ repos:
         entry: ./scripts/check-sops-encryption.sh
         language: script
         files: '(secret|credential|token|key).*\.yaml$'
+        exclude: 'kustomization\.yaml$'
         stages: [pre-commit]

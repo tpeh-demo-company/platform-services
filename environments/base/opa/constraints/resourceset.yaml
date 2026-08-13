@@ -27,7 +27,7 @@ spec:
       metadata:
         name: namespace-must-have-team
         annotations:
-          description: "All team-owned namespaces must declare team, environment, and cost-center labels"
+          description: "All team-owned namespaces must declare team and environment labels"
       spec:
         enforcementAction: deny
         match:
@@ -46,14 +46,13 @@ spec:
             - metallb-system
             - opa-gatekeeper
             - monitoring
+            - cloudflare-system
         parameters:
           labels:
             - key: "team"
               allowedRegex: "^[a-z]{2,20}$"
             - key: "environment"
               allowedRegex: "^(dev|staging|prod)$"
-            - key: "cost-center"
-              allowedRegex: "^[0-9]{4,6}$"
     - apiVersion: constraints.gatekeeper.sh/v1beta1
       kind: ResourceLimits
       metadata:
@@ -78,6 +77,7 @@ spec:
             - metallb-system
             - opa-gatekeeper
             - monitoring
+            - cloudflare-system
         parameters:
           cpu: "2"
           memory: "4Gi"

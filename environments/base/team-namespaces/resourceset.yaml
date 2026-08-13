@@ -21,7 +21,6 @@ spec:
         labels:
           team: << inputs.team | quote >>
           environment: << inputs.environment | quote >>
-          cost-center: << inputs.costCenter | quote >>
           istio.io/dataplane-mode: ambient
     # ----------------------- Resource governance ------------------------
     - apiVersion: v1

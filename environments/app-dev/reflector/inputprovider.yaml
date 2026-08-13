@@ -1,12 +1,11 @@
 apiVersion: fluxcd.controlplane.io/v1
 kind: ResourceSetInputProvider
 metadata:
-  name: istio-app-dev
+  name: reflector-app-dev
   namespace: flux-system
   labels:
-    app: istio
+    app: reflector
 spec:
   type: Static
   defaultValues:
-    version: "1.30.3"
-    gatewayApiVersion: "v1.6.1"
+    version: "10.0.63"

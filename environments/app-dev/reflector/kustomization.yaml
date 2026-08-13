@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base/reflector
+  - ./inputprovider.yaml
+
+patches:
+  - patch: |-
+      - op: add
+        path: /metadata/annotations/reflector.v1.k8s.emberstack.com~1reflection-allowed-namespaces-selector
+        value: "environment=app-dev"
+    target:
+      kind: Secret
+      name: github-auth

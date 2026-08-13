@@ -12,7 +12,6 @@ spec:
   inputs:
     - team: application
       environment: prod
-      costCenter: "1000"
       cpu: "2"
       memory: "4Gi"
       cpuLimit: "4"
