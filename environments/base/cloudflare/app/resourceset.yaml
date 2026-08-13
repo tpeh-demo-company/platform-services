@@ -29,7 +29,6 @@ spec:
       data:
         config.yaml: |
           tunnel: << inputs.cluster >>
-          credentials-file: /creds/credentials.json
           originRequest:
             noTLSVerify: true
             http2Origin: true
@@ -44,47 +43,100 @@ spec:
         namespace: cloudflare-system
       spec:
         replicas: 2
+        revisionHistoryLimit: 3
         selector:
           matchLabels:
             app: cloudflared
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
         template:
           metadata:
             labels:
               app: cloudflared
           spec:
+            automountServiceAccountToken: false
+            enableServiceLinks: false
+            terminationGracePeriodSeconds: 30
             serviceAccountName: cloudflared
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 65534
+              runAsGroup: 65534
+              seccompProfile:
+                type: RuntimeDefault
             tolerations:
               - key: node-role.kubernetes.io/control-plane
                 operator: Exists
                 effect: NoSchedule
             containers:
               - name: cloudflared
-                # docker rate limit
                 image: mirror.gcr.io/cloudflare/cloudflared:<< inputs.version >>
                 args:
                   - tunnel
                   - --config
-                  - /etc/cloudflared/config.yaml
+                  - /etc/cloudflared/config/config.yaml
                   - run
+                env:
+                  - name: NO_AUTOUPDATE
+                    value: "true"
+                  - name: TUNNEL_CRED_FILE
+                    value: /etc/cloudflared/creds/credentials.json
+                  - name: TUNNEL_METRICS
+                    value: 0.0.0.0:8080
+                  - name: TUNNEL_POST_QUANTUM
+                    value: "true"
+                  - name: TUNNEL_TRANSPORT_PROTOCOL
+                    value: quic
+                startupProbe:
+                  httpGet:
+                    path: /ready
+                    port: 8080
+                    scheme: HTTP
+                  failureThreshold: 30
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 1
                 livenessProbe:
                   httpGet:
                     path: /ready
                     port: 8080
+                    scheme: HTTP
                   failureThreshold: 3
-                  initialDelaySeconds: 10
                   periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                readinessProbe:
+                  httpGet:
+                    path: /ready
+                    port: 8080
+                    scheme: HTTP
+                  failureThreshold: 3
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  readOnlyRootFilesystem: true
+                  capabilities:
+                    drop:
+                      - ALL
                 resources:
                   requests:
-                    cpu: 100m
-                    memory: 64Mi
+                    cpu: 6m
+                    memory: 105Mi
                   limits:
-                    cpu: 500m
-                    memory: 256Mi
+                    memory: 105Mi
                 volumeMounts:
                   - name: tunnel-config
-                    mountPath: /etc/cloudflared
+                    mountPath: /etc/cloudflared/config/config.yaml
+                    subPath: config.yaml
+                    readOnly: true
                   - name: tunnel-credentials
-                    mountPath: /creds
+                    mountPath: /etc/cloudflared/creds/credentials.json
+                    subPath: credentials.json
                     readOnly: true
             volumes:
               - name: tunnel-config
