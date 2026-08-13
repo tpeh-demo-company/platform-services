@@ -9,4 +9,4 @@ spec:
   type: Static
   defaultValues:
     version: "88.1.5"
-    domain: "platform-sandbox.com"
+    domain: "platform-sandbox.demo-company.site"
