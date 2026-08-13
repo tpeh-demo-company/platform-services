@@ -45,6 +45,7 @@ spec:
         dnsNames:
           - "demo-company.site"
           - "*.demo-company.site"
+          - "*.<< inputs.cluster >>.demo-company.site"
         issuerRef:
           name: letsencrypt-production
           kind: ClusterIssuer
@@ -83,7 +84,7 @@ spec:
           - name: https
             port: 443
             protocol: HTTPS
-            hostname: "*.demo-company.site"
+            hostname: "*.<< inputs.cluster >>.demo-company.site"
             tls:
               mode: Terminate
               certificateRefs:
