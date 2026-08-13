@@ -33,7 +33,7 @@ spec:
             noTLSVerify: true
             http2Origin: true
           ingress:
-            - hostname: "*.<< inputs.cluster >>.demo-company.site"
+            - hostname: "*.demo-company.site"
               service: https://gateway-istio.istio-system.svc.cluster.local:443
             - service: http_status:404
     - apiVersion: apps/v1
