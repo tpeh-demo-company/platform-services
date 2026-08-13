@@ -69,8 +69,8 @@ spec:
                 livenessProbe:
                   httpGet:
                     path: /ready
-                    port: 2000
-                  failureThreshold: 1
+                    port: 8080
+                  failureThreshold: 3
                   initialDelaySeconds: 10
                   periodSeconds: 10
                 resources:
