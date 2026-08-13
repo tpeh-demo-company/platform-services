@@ -67,7 +67,7 @@ spec:
           txtOwnerId: << inputs.cluster >>
           domainFilters:
             - demo-company.site
-          extraEnvVars:
+          env:
             - name: CF_API_TOKEN
               valueFrom:
                 secretKeyRef:
