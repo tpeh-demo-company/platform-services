@@ -10,4 +10,3 @@ spec:
   defaultValues:
     version: "1.30.3"
     gatewayApiVersion: "v1.6.1"
-    cluster: "app-dev"
