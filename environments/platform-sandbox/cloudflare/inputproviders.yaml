@@ -1,0 +1,25 @@
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSetInputProvider
+metadata:
+  name: cloudflare-platform-sandbox
+  namespace: flux-system
+  labels:
+    app: cloudflare
+spec:
+  type: Static
+  defaultValues:
+    version: "2026.7.3"
+    cluster: "platform-sandbox"
+---
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSetInputProvider
+metadata:
+  name: external-dns-platform-sandbox
+  namespace: flux-system
+  labels:
+    app: external-dns
+spec:
+  type: Static
+  defaultValues:
+    version: "1.21.1"
+    cluster: "platform-sandbox"
