@@ -63,7 +63,7 @@ spec:
             proxied: true
           sources:
             - service
-            - httproute
+            - gateway-httproute
           txtOwnerId: << inputs.cluster >>
           domainFilters:
             - demo-company.site
