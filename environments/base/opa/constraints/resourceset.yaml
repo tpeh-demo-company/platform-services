@@ -46,6 +46,7 @@ spec:
             - metallb-system
             - opa-gatekeeper
             - monitoring
+            - cloudflare-system
         parameters:
           labels:
             - key: "team"
@@ -76,6 +77,7 @@ spec:
             - metallb-system
             - opa-gatekeeper
             - monitoring
+            - cloudflare-system
         parameters:
           cpu: "2"
           memory: "4Gi"
