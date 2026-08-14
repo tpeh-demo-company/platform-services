@@ -61,6 +61,10 @@ spec:
             name: cloudflare
           cloudflare:
             proxied: true
+          policy: sync
+          extraArgs:
+            - --cloudflare-proxied
+            - --gateway-name=gateway
           sources:
             - service
             - gateway-httproute
