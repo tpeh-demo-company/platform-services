@@ -32,6 +32,7 @@ spec:
           originRequest:
             noTLSVerify: true
             http2Origin: true
+            originServerName: "<< inputs.cluster >>.demo-company.site"
           ingress:
             - hostname: "*.demo-company.site"
               service: https://gateway-istio.istio-system.svc.cluster.local:443
