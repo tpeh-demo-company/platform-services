@@ -8,6 +8,7 @@ resources:
   - ./monitoring
   - ./reflector
   - ./cloudflare
+  - ./flagger
   - ./team-namespaces
 
 labels:

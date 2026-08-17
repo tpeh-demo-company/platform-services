@@ -1,0 +1,12 @@
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSetInputProvider
+metadata:
+  name: flagger-platform-sandbox
+  namespace: flux-system
+  labels:
+    app: flagger
+spec:
+  type: Static
+  defaultValues:
+    version: "1.44.0"
+    loadtesterVersion: "0.35.0"
