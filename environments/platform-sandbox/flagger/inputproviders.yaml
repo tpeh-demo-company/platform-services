@@ -9,4 +9,3 @@ spec:
   type: Static
   defaultValues:
     version: "1.44.0"
-    loadtesterVersion: "1.44.0"
