@@ -33,7 +33,7 @@ spec:
       kind: HelmRelease
       metadata:
         name: kyverno
-        namespace: kube-system
+        namespace: kyverno
       spec:
         interval: 5m
         chartRef:
@@ -41,7 +41,7 @@ spec:
           name: kyverno
           namespace: flux-system
         install:
-          createNamespace: false
+          createNamespace: true
           timeout: 10m0s
           remediation:
             retries: 3
