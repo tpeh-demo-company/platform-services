@@ -1,0 +1,84 @@
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSet
+metadata:
+  name: generate-waypoint-resources
+  namespace: flux-system
+  annotations:
+    fluxcd.controlplane.io/reconcile: "enabled"
+    fluxcd.controlplane.io/reconcileEvery: "30m"
+    fluxcd.controlplane.io/reconcileTimeout: "5m"
+    fluxcd.controlplane.io/force: "true"
+spec:
+  wait: true
+  dependsOn:
+    - apiVersion: fluxcd.controlplane.io/v1
+      kind: ResourceSet
+      name: kyverno
+      namespace: flux-system
+      ready: true
+    - apiVersion: fluxcd.controlplane.io/v1
+      kind: ResourceSet
+      name: istio-gateway
+      namespace: flux-system
+      ready: true
+    - apiVersion: fluxcd.controlplane.io/v1
+      kind: ResourceSet
+      name: kube-prometheus-stack
+      namespace: flux-system
+      ready: true
+  resources:
+    - apiVersion: kyverno.io/v1
+      kind: ClusterPolicy
+      metadata:
+        name: generate-waypoint-resources
+      spec:
+        rules:
+          - name: generate-waypoint
+            match:
+              any:
+                - resources:
+                    kinds:
+                      - Namespace
+                    selector:
+                      matchLabels:
+                        istio.io/use-waypoint: "true"
+            generate:
+              apiVersion: gateway.networking.k8s.io/v1
+              kind: Gateway
+              name: waypoint
+              namespace: "{{request.object.metadata.name}}"
+              synchronize: true
+              data:
+                metadata:
+                  labels:
+                    istio.io/waypoint-for: namespace
+                spec:
+                  gatewayClassName: istio-waypoint
+                  listeners:
+                    - name: mesh
+                      port: 15008
+                      protocol: HBONE
+          - name: generate-podmonitor
+            match:
+              any:
+                - resources:
+                    kinds:
+                      - Namespace
+                    selector:
+                      matchLabels:
+                        istio.io/use-waypoint: "true"
+            generate:
+              apiVersion: monitoring.coreos.com/v1
+              kind: PodMonitor
+              name: waypoint
+              namespace: "{{request.object.metadata.name}}"
+              synchronize: true
+              data:
+                spec:
+                  selector:
+                    matchLabels:
+                      gateway.networking.k8s.io/gateway-name: waypoint
+                  podMetricsEndpoints:
+                    - port: metrics
+                      path: /metrics
+                      interval: 15s

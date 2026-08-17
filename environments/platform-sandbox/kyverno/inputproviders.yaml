@@ -1,0 +1,11 @@
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSetInputProvider
+metadata:
+  name: kyverno-platform-sandbox
+  namespace: flux-system
+  labels:
+    app: kyverno
+spec:
+  type: Static
+  defaultValues:
+    version: "3.8.2"

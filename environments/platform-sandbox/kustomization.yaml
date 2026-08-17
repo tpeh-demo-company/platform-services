@@ -9,6 +9,7 @@ resources:
   - ./reflector
   - ./cloudflare
   - ./flagger
+  - ./kyverno
   - ./team-namespaces
 
 labels:
