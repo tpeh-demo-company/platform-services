@@ -54,3 +54,24 @@ spec:
           remediation:
             retries: 3
             remediateLastFailure: true
+        values:
+          admissionController:
+            rbac:
+              clusterRole:
+                extraResources:
+                  - apiGroups: ["gateway.networking.k8s.io"]
+                    resources: ["gateways"]
+                    verbs: ["get", "list", "watch"]
+                  - apiGroups: ["monitoring.coreos.com"]
+                    resources: ["podmonitors"]
+                    verbs: ["get", "list", "watch"]
+          backgroundController:
+            rbac:
+              clusterRole:
+                extraResources:
+                  - apiGroups: ["gateway.networking.k8s.io"]
+                    resources: ["gateways"]
+                    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+                  - apiGroups: ["monitoring.coreos.com"]
+                    resources: ["podmonitors"]
+                    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
