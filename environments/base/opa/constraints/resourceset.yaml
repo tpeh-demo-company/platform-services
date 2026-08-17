@@ -47,6 +47,7 @@ spec:
             - opa-gatekeeper
             - monitoring
             - cloudflare-system
+            - kyverno
         parameters:
           labels:
             - key: "team"
@@ -78,6 +79,7 @@ spec:
             - opa-gatekeeper
             - monitoring
             - cloudflare-system
+            - kyverno
         parameters:
           cpu: "2"
           memory: "4Gi"
