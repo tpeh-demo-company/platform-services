@@ -52,11 +52,13 @@ spec:
           name: flagger
           namespace: flux-system
         install:
+          crds: CreateReplace
           createNamespace: false
           timeout: 10m0s
           remediation:
             retries: 3
         upgrade:
+          crds: CreateReplace
           timeout: 10m0s
           remediation:
             retries: 3
