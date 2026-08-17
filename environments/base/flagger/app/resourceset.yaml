@@ -44,7 +44,7 @@ spec:
       kind: HelmRelease
       metadata:
         name: flagger
-        namespace: flagger-system
+        namespace: flux-system
       spec:
         interval: 5m
         chartRef:
@@ -52,7 +52,7 @@ spec:
           name: flagger
           namespace: flux-system
         install:
-          createNamespace: true
+          createNamespace: false
           timeout: 10m0s
           remediation:
             retries: 3

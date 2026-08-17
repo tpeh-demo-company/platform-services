@@ -39,7 +39,7 @@ spec:
       kind: HelmRelease
       metadata:
         name: flagger-loadtester
-        namespace: flagger-system
+        namespace: flux-system
       spec:
         interval: 5m
         chartRef:
