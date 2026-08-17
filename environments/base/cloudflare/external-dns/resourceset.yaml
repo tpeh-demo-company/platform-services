@@ -21,6 +21,11 @@ spec:
       name: cloudflare
       namespace: flux-system
       ready: true
+    - apiVersion: fluxcd.controlplane.io/v1
+      kind: ResourceSet
+      name: reflector
+      namespace: flux-system
+      ready: true
   resources:
     - apiVersion: source.toolkit.fluxcd.io/v1
       kind: OCIRepository
