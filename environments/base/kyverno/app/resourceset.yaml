@@ -33,7 +33,7 @@ spec:
       kind: HelmRelease
       metadata:
         name: kyverno
-        namespace: flux-system
+        namespace: kube-system
       spec:
         interval: 5m
         chartRef:
