@@ -3,4 +3,3 @@ kind: Kustomization
 
 resources:
   - ../../../base/istio/kiali
-  - ./inputproviders.yaml

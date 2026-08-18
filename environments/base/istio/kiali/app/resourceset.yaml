@@ -14,7 +14,7 @@ spec:
     - kind: ResourceSetInputProvider
       selector:
         matchLabels:
-          app: kiali
+          app: istio
   dependsOn:
     - apiVersion: fluxcd.controlplane.io/v1
       kind: ResourceSet
@@ -45,7 +45,7 @@ spec:
         chart:
           spec:
             chart: kiali-server
-            version: "<< inputs.version >>"
+            version: "<< inputs.kialiVersion >>"
             sourceRef:
               kind: HelmRepository
               name: kiali
