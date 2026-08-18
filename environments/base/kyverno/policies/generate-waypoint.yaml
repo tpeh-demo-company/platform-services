@@ -44,7 +44,8 @@ spec:
               operations: ["CREATE"]
               resources: ["namespaces"]
         matchConditions:
-          - expression: >
+          - name: has-waypoint-label
+            expression: >
               object.metadata.?labels[?'istio.io/use-waypoint'].orValue('') == 'true'
         variables:
           - name: ns
