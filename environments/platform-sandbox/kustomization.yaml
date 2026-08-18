@@ -10,6 +10,7 @@ resources:
   - ./cloudflare
   - ./flagger
   - ./kyverno
+  - ./kiali
   - ./team-namespaces
 
 labels:
