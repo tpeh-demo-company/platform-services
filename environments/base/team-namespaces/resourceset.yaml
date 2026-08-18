@@ -105,6 +105,20 @@ spec:
               - namespaceSelector:
                   matchLabels:
                     kubernetes.io/metadata.name: istio-system
+    - apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: allow-from-flux-system
+        namespace: << inputs.team >>
+      spec:
+        podSelector: {}
+        policyTypes:
+          - Ingress
+        ingress:
+          - from:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: flux-system
     # ----------------------- AuthorizationPolicy (deny-by-default, explicit allows) ------------------------
     # mTLS is enforced automatically by ztunnel in ambient mode — no PeerAuthentication needed
     - apiVersion: security.istio.io/v1beta1
@@ -138,3 +152,14 @@ spec:
                     - istio-system
                   principals:
                     - cluster.local/ns/istio-system/sa/gateway-istio
+    - apiVersion: security.istio.io/v1beta1
+      kind: AuthorizationPolicy
+      metadata:
+        name: allow-from-flux-system
+        namespace: << inputs.team >>
+      spec:
+        rules:
+          - from:
+              - source:
+                  namespaces:
+                    - flux-system
