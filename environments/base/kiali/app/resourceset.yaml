@@ -27,10 +27,6 @@ spec:
       namespace: flux-system
       ready: true
   resources:
-    - apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: kiali
     - apiVersion: source.toolkit.fluxcd.io/v1
       kind: HelmRepository
       metadata:
@@ -43,7 +39,7 @@ spec:
       kind: HelmRelease
       metadata:
         name: kiali
-        namespace: kiali
+        namespace: istio-system
       spec:
         interval: 10m
         chart:
