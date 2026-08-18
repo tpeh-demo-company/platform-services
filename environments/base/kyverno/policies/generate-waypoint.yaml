@@ -27,58 +27,71 @@ spec:
       namespace: flux-system
       ready: true
   resources:
-    - apiVersion: kyverno.io/v1
-      kind: ClusterPolicy
+    - apiVersion: policies.kyverno.io/v1
+      kind: GeneratingPolicy
       metadata:
         name: generate-waypoint-resources
       spec:
-        rules:
-          - name: generate-waypoint
-            match:
-              any:
-                - resources:
-                    kinds:
-                      - Namespace
-                    selector:
-                      matchLabels:
-                        istio.io/use-waypoint: "true"
-            generate:
-              apiVersion: gateway.networking.k8s.io/v1
-              kind: Gateway
-              name: waypoint
-              namespace: "{{request.object.metadata.name}}"
-              synchronize: true
-              data:
-                metadata:
-                  labels:
-                    istio.io/waypoint-for: namespace
-                spec:
-                  gatewayClassName: istio-waypoint
-                  listeners:
-                    - name: mesh
-                      port: 15008
-                      protocol: HBONE
-          - name: generate-podmonitor
-            match:
-              any:
-                - resources:
-                    kinds:
-                      - Namespace
-                    selector:
-                      matchLabels:
-                        istio.io/use-waypoint: "true"
-            generate:
-              apiVersion: monitoring.coreos.com/v1
-              kind: PodMonitor
-              name: waypoint
-              namespace: "{{request.object.metadata.name}}"
-              synchronize: true
-              data:
-                spec:
-                  selector:
-                    matchLabels:
-                      gateway.networking.k8s.io/gateway-name: waypoint
-                  podMetricsEndpoints:
-                    - port: metrics
-                      path: /metrics
-                      interval: 15s
+        evaluation:
+          synchronize:
+            enabled: true
+          generateExisting:
+            enabled: true
+        matchConstraints:
+          resourceRules:
+            - apiGroups: [""]
+              apiVersions: ["v1"]
+              operations: ["CREATE"]
+              resources: ["namespaces"]
+        matchConditions:
+          - expression: >
+              object.metadata.?labels[?'istio.io/use-waypoint'].orValue('') == 'true'
+        variables:
+          - name: ns
+            expression: "object.metadata.name"
+          - name: gateway
+            expression: >
+              [{
+                "kind": dyn("Gateway"),
+                "apiVersion": dyn("gateway.networking.k8s.io/v1"),
+                "metadata": dyn({
+                  "name": "waypoint",
+                  "namespace": string(variables.ns),
+                  "labels": dyn({
+                    "istio.io/waypoint-for": "namespace"
+                  })
+                }),
+                "spec": dyn({
+                  "gatewayClassName": "istio-waypoint",
+                  "listeners": dyn([{
+                    "name": "mesh",
+                    "port": 15008,
+                    "protocol": "HBONE"
+                  }])
+                })
+              }]
+          - name: podMonitor
+            expression: >
+              [{
+                "kind": dyn("PodMonitor"),
+                "apiVersion": dyn("monitoring.coreos.com/v1"),
+                "metadata": dyn({
+                  "name": "waypoint",
+                  "namespace": string(variables.ns)
+                }),
+                "spec": dyn({
+                  "selector": dyn({
+                    "matchLabels": dyn({
+                      "gateway.networking.k8s.io/gateway-name": "waypoint"
+                    })
+                  }),
+                  "podMetricsEndpoints": dyn([{
+                    "port": "metrics",
+                    "path": "/metrics",
+                    "interval": "15s"
+                  }])
+                })
+              }]
+        generate:
+          - expression: "generator.Apply(variables.ns, variables.gateway)"
+          - expression: "generator.Apply(variables.ns, variables.podMonitor)"
