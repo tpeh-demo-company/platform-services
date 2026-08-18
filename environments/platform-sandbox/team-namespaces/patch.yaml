@@ -12,8 +12,8 @@ spec:
   inputs:
     - team: demo
       environment: staging
-      cpu: "1"
-      memory: "2Gi"
-      cpuLimit: "2"
-      memoryLimit: "4Gi"
+      cpu: "2"
+      memory: "4Gi"
+      cpuLimit: "4"
+      memoryLimit: "8Gi"
       maxPods: "10"
