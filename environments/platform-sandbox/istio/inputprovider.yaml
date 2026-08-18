@@ -11,4 +11,4 @@ spec:
     version: "1.30.3"
     gatewayApiVersion: "v1.6.1"
     cnameTarget: "platform-sandbox.demo-company.site"
-    kialiVersion: "2.7.0"
+    kialiVersion: "2.30.0"
