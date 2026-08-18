@@ -27,7 +27,7 @@ spec:
       namespace: flux-system
       ready: true
   resources:
-    - apiVersion: kyverno.io/v2
+    - apiVersion: kyverno.io/v1
       kind: ClusterPolicy
       metadata:
         name: generate-waypoint-resources
