@@ -9,6 +9,7 @@ metadata:
     fluxcd.controlplane.io/reconcileTimeout: "2m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   dependsOn:
     - apiVersion: fluxcd.controlplane.io/v1

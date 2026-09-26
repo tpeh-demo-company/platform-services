@@ -1,6 +1,6 @@
 # The Platform Engineer's Handbook - Platform Services
 
-This repo is the GitOps source that Flux reconciles onto the cluster: platform-wide services (e. g cert-manager, Istio, OPA/Gatekeeper, team namespaces) defined as [Flux Operator](https://fluxcd-operator.dev/) `ResourceSet`s, laid out as a Kustomize base plus one overlay per environment. 
+This repo is the GitOps source that Flux reconciles onto the cluster: platform-wide services (e.g. cert-manager, Istio, OPA/Gatekeeper, monitoring) defined as [Flux Operator](https://fluxcd-operator.dev/) `ResourceSet`s, laid out as a Kustomize base plus one overlay per environment. 
 
 
 ## Prerequisites
@@ -18,18 +18,19 @@ This repo is the GitOps source that Flux reconciles onto the cluster: platform-w
 environments/
 ├── base/
 │   ├── cert-manager/
+│   │   ├── namespace.yaml
 │   │   ├── app/
 │   │   └── ca/
 │   ├── istio/
 │   │   ├── app/
 │   │   └── ...
 │   └── ...
-├── platform-sandbox/
+├── staging/
 │   ├── cert-manager/
 │   ├── istio/
 │   ├── ...
 │   └── kustomization.yaml
-└── app-dev/
+└── production/
     ├── istio/
     ├── ...
     └── kustomization.yaml
@@ -43,12 +44,18 @@ Each environment is a standard Kustomize overlay on top of the relevant `base/` 
 
 - **Ordering is expressed via `spec.dependsOn`, not folder nesting.** E.g. `istio-gateway` and `istio-mtls` both `dependsOn: istio`.
 
-- **Per-environment overrides use two different mechanisms depending on the base resource:** components exposing a `ResourceSetInputProvider` (label `app: <component>`) get a per-env `<component>/inputprovider.yaml`, `team-namespaces` instead gets a Kustomize patch (`<component>/patch.yaml`) against the base `ResourceSet`.
+- **Per-environment overrides use a `ResourceSetInputProvider`.** Each env gets one `<component>/inputprovider.yaml`, labelled `app: <component>`, holding that component's values. Every `ResourceSet` of the component selects that label, so a component with several `ResourceSet`s (istio, monitoring) shares one provider and uses namespaced keys (`kialiVersion`, `tempoVersion`, ...). Versions come from `<< inputs.version >>` or `<< inputs.<name>Version >>`; `policy/` enforces this.
+
+- **Multitenancy is locked down; every object names its ServiceAccount.** The `platform-services` `Kustomization` reconciles as `flux-infra` (cluster-admin). Each `ResourceSet` sets `spec.serviceAccountName: flux-infra`, and every `HelmRelease`/`Kustomization` it generates sets `serviceAccountName: flux` (or `flux-infra` for objects living in `flux-system`).
+
+- **Namespaces and the `flux` ServiceAccount are plain files at component level**, not inside a `ResourceSet`: `environments/base/<component>/namespace.yaml` holds the `Namespace`, the `flux` ServiceAccount and a `ClusterRoleBinding` to `cluster-admin`, listed first in the component's `kustomization.yaml`. Namespaces shared by several `ResourceSet`s (`istio-system`, `monitoring`) are declared once this way.
+
+- **A `HelmRelease`'s source lives in the same namespace as the release.** `--no-cross-namespace-refs` is on, so the `HelmRepository`/`OCIRepository` and any `chartRef`/`sourceRef` are created in the release's namespace, and `createNamespace` is not used.
 
 ## Environments
 
-- **`platform-sandbox`** — the continuous environment; reconciled on every push to `main`.
-- **`app-dev`** — the production-equivalent environment, carrying the same components as `platform-sandbox`. Intended to reconcile on merge to a `production` branch rather than on every push to `main`
+- **`staging`** — reconciled from the `main` branch (the `platform-sandbox` cluster).
+- **`production`** — the production-equivalent overlay, carrying the same components as `staging`, reconciled from the `production` branch (the `app-dev` cluster). Promote by merging `main` into `production`.
 
 ## Validating changes locally
 
@@ -74,3 +81,4 @@ Flux's `Kustomization` for each environment (in `platform-gitops`) has `spec.dec
 2. If a concern must reconcile after another, set `spec.dependsOn` on its `ResourceSet` to point at the one it depends on.
 3. Wire `environments/base/<component>` into every environment overlay that should run it.
 4. If the component needs per-environment values, add a `ResourceSetInputProvider` under `environments/<env>/<component>/`.
+5. Add `environments/base/<component>/namespace.yaml` (`Namespace`, `flux` ServiceAccount, `ClusterRoleBinding`), set `serviceAccountName` on the `ResourceSet` and on every `HelmRelease`/`Kustomization` it generates, and put the release's source in the release's namespace.

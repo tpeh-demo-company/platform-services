@@ -28,7 +28,8 @@ deny contains msg if {
 }
 
 # Every HelmRelease inside a ResourceSet's resources block must use the
-# << inputs.version >> placeholder so versions are driven by the InputProvider.
+# << inputs.version >> (or << inputs.<name>Version >>) placeholder so versions are
+# driven by the InputProvider.
 
 deny contains msg if {
   input.kind == "ResourceSet"
@@ -48,9 +49,9 @@ deny contains msg if {
   resource.kind == "HelmRelease"
   not resource.spec.chartRef
   version := resource.spec.chart.spec.version
-  not contains(version, "<< inputs.version >>")
+  not regex.match(`<< inputs\.([A-Za-z]*[vV])ersion >>`, version)
   msg := sprintf(
-    "ResourceSet %s: HelmRelease %s chart version '%s' must use '<< inputs.version >>'",
+    "ResourceSet %s: HelmRelease %s chart version '%s' must use an inputs version placeholder",
     [input.metadata.name, resource.metadata.name, version],
   )
 }

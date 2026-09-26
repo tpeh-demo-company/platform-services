@@ -1,0 +1,11 @@
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSetInputProvider
+metadata:
+  name: cert-manager-staging
+  namespace: flux-system
+  labels:
+    app: cert-manager
+spec:
+  type: Static
+  defaultValues:
+    version: "1.21.0"
