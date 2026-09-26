@@ -9,25 +9,26 @@ metadata:
     fluxcd.controlplane.io/reconcileTimeout: "5m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   inputsFrom:
     - kind: ResourceSetInputProvider
       selector:
         matchLabels:
-          app: victoria-logs
+          app: monitoring
   resources:
     - apiVersion: source.toolkit.fluxcd.io/v1
       kind: OCIRepository
       metadata:
         name: victoria-logs
-        namespace: flux-system
+        namespace: monitoring
       spec:
         interval: 5m
         layerSelector:
           mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
           operation: copy
         ref:
-          tag: << inputs.version >>
+          tag: << inputs.victoriaLogsVersion >>
         url: oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
@@ -35,13 +36,14 @@ spec:
         name: victoria-logs
         namespace: monitoring
       spec:
+        serviceAccountName: flux
         interval: 15m
         timeout: 5m
         maxHistory: 2
         chartRef:
           kind: OCIRepository
           name: victoria-logs
-          namespace: flux-system
+          namespace: monitoring
         install:
           timeout: 10m0s
           remediation:

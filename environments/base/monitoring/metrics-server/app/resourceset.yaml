@@ -9,18 +9,19 @@ metadata:
     fluxcd.controlplane.io/reconcileTimeout: "5m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   inputsFrom:
     - kind: ResourceSetInputProvider
       selector:
         matchLabels:
-          app: metrics-server
+          app: monitoring
   resources:
     - apiVersion: source.toolkit.fluxcd.io/v1
       kind: HelmRepository
       metadata:
         name: metrics-server
-        namespace: flux-system
+        namespace: monitoring
       spec:
         interval: 30m
         url: https://kubernetes-sigs.github.io/metrics-server/
@@ -31,17 +32,18 @@ spec:
         name: metrics-server
         namespace: monitoring
       spec:
+        serviceAccountName: flux
         interval: 15m
         timeout: 5m
         maxHistory: 2
         chart:
           spec:
             chart: metrics-server
-            version: << inputs.version >>
+            version: << inputs.metricsServerVersion >>
             sourceRef:
               kind: HelmRepository
               name: metrics-server
-              namespace: flux-system
+              namespace: monitoring
         install:
           timeout: 10m0s
           remediation:

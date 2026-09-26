@@ -9,6 +9,7 @@ metadata:
     fluxcd.controlplane.io/reconcileTimeout: "5m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   inputsFrom:
     - kind: ResourceSetInputProvider
@@ -20,7 +21,7 @@ spec:
       kind: HelmRepository
       metadata:
         name: gatekeeper
-        namespace: flux-system
+        namespace: opa-gatekeeper
       spec:
         interval: 30m
         url: https://open-policy-agent.github.io/gatekeeper/charts
@@ -31,6 +32,7 @@ spec:
         name: gatekeeper
         namespace: opa-gatekeeper
       spec:
+        serviceAccountName: flux
         interval: 5m
         chart:
           spec:
@@ -39,10 +41,9 @@ spec:
             sourceRef:
               kind: HelmRepository
               name: gatekeeper
-              namespace: flux-system
+              namespace: opa-gatekeeper
             interval: 10m
         install:
-          createNamespace: true
           timeout: 10m0s
           remediation:
             retries: 3

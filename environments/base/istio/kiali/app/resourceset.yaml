@@ -9,6 +9,7 @@ metadata:
     fluxcd.controlplane.io/reconcileTimeout: "5m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   inputsFrom:
     - kind: ResourceSetInputProvider
@@ -31,7 +32,7 @@ spec:
       kind: HelmRepository
       metadata:
         name: kiali
-        namespace: flux-system
+        namespace: istio-system
       spec:
         interval: 1h
         url: https://kiali.org/helm-charts
@@ -41,6 +42,7 @@ spec:
         name: kiali
         namespace: istio-system
       spec:
+        serviceAccountName: flux
         interval: 10m
         chart:
           spec:
@@ -49,7 +51,7 @@ spec:
             sourceRef:
               kind: HelmRepository
               name: kiali
-              namespace: flux-system
+              namespace: istio-system
         install:
           createNamespace: false
           timeout: 5m

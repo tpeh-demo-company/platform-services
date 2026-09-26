@@ -9,6 +9,7 @@ metadata:
     fluxcd.controlplane.io/reconcileTimeout: "5m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   inputsFrom:
     - kind: ResourceSetInputProvider
@@ -20,7 +21,7 @@ spec:
       kind: HelmRepository
       metadata:
         name: istio
-        namespace: flux-system
+        namespace: istio-system
       spec:
         interval: 30m
         url: https://istio-release.storage.googleapis.com/charts
@@ -31,6 +32,7 @@ spec:
         name: istio-base
         namespace: istio-system
       spec:
+        serviceAccountName: flux
         interval: 5m
         chart:
           spec:
@@ -39,9 +41,8 @@ spec:
             sourceRef:
               kind: HelmRepository
               name: istio
-              namespace: flux-system
+              namespace: istio-system
         install:
-          createNamespace: true
           timeout: 10m0s
           remediation:
             retries: 3
@@ -56,6 +57,7 @@ spec:
         name: istiod
         namespace: istio-system
       spec:
+        serviceAccountName: flux
         interval: 5m
         dependsOn:
           - name: istio-base
@@ -66,7 +68,7 @@ spec:
             sourceRef:
               kind: HelmRepository
               name: istio
-              namespace: flux-system
+              namespace: istio-system
         install:
           timeout: 10m0s
           remediation:
@@ -99,6 +101,7 @@ spec:
         name: istio-cni
         namespace: istio-system
       spec:
+        serviceAccountName: flux
         interval: 5m
         dependsOn:
           - name: istio-base
@@ -109,7 +112,7 @@ spec:
             sourceRef:
               kind: HelmRepository
               name: istio
-              namespace: flux-system
+              namespace: istio-system
         install:
           timeout: 10m0s
           remediation:
@@ -127,6 +130,7 @@ spec:
         name: istio-ztunnel
         namespace: istio-system
       spec:
+        serviceAccountName: flux
         interval: 5m
         dependsOn:
           - name: istio-cni
@@ -138,7 +142,7 @@ spec:
             sourceRef:
               kind: HelmRepository
               name: istio
-              namespace: flux-system
+              namespace: istio-system
         install:
           timeout: 10m0s
           remediation:
