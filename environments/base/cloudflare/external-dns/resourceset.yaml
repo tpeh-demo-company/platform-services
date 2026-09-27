@@ -75,9 +75,9 @@ spec:
           sources:
             - service
             - gateway-httproute
-          txtOwnerId: << inputs.cluster >>
+          txtOwnerId: ${CLUSTER_NAME}
           domainFilters:
-            - demo-company.site
+            - ${CLUSTER_DOMAIN}
           env:
             - name: CF_API_TOKEN
               valueFrom:

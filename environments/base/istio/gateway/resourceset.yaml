@@ -42,10 +42,10 @@ spec:
         secretName: wildcard-tls
         duration: 2160h # 90 days
         renewBefore: 360h # 15 days
-        commonName: "demo-company.site"
+        commonName: "${CLUSTER_DOMAIN}"
         dnsNames:
-          - "demo-company.site"
-          - "*.demo-company.site"
+          - "${CLUSTER_DOMAIN}"
+          - "*.${CLUSTER_DOMAIN}"
         issuerRef:
           name: letsencrypt-production
           kind: ClusterIssuer
@@ -74,7 +74,7 @@ spec:
         name: gateway
         namespace: istio-system
         annotations:
-          external-dns.alpha.kubernetes.io/target: << inputs.cnameTarget >>
+          external-dns.alpha.kubernetes.io/target: ${CLUSTER_NAME}.${CLUSTER_DOMAIN}
       spec:
         gatewayClassName: istio
         infrastructure:
@@ -86,7 +86,7 @@ spec:
           - name: https
             port: 443
             protocol: HTTPS
-            hostname: "*.demo-company.site"
+            hostname: "*.${CLUSTER_DOMAIN}"
             tls:
               mode: Terminate
               certificateRefs:

@@ -9,7 +9,6 @@ spec:
   type: Static
   defaultValues:
     kubePrometheusStackVersion: "88.1.5"
-    domain: "platform-sandbox.demo-company.site"
     tempoVersion: "1.24.4"
     metricsServerVersion: "3.13.1"
     victoriaLogsVersion: "0.13.9"

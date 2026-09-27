@@ -29,13 +29,13 @@ spec:
         namespace: cloudflare-system
       data:
         config.yaml: |
-          tunnel: << inputs.cluster >>
+          tunnel: ${CLUSTER_NAME}
           originRequest:
             noTLSVerify: true
             http2Origin: true
-            originServerName: "<< inputs.cluster >>.demo-company.site"
+            originServerName: "${CLUSTER_NAME}.${CLUSTER_DOMAIN}"
           ingress:
-            - hostname: "*.demo-company.site"
+            - hostname: "*.${CLUSTER_DOMAIN}"
               service: https://gateway-istio.istio-system.svc.cluster.local:443
             - service: http_status:404
     - apiVersion: apps/v1
