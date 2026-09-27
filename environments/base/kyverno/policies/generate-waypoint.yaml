@@ -10,6 +10,7 @@ metadata:
     fluxcd.controlplane.io/force: "true"
 spec:
   wait: true
+  serviceAccountName: flux-infra
   dependsOn:
     - apiVersion: fluxcd.controlplane.io/v1
       kind: ResourceSet
