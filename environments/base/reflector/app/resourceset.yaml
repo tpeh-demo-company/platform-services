@@ -5,10 +5,11 @@ metadata:
   namespace: flux-system
   annotations:
     fluxcd.controlplane.io/reconcile: "enabled"
-    fluxcd.controlplane.io/reconcileEvery: "30m"
+    fluxcd.controlplane.io/reconcileEvery: "10m"
     fluxcd.controlplane.io/reconcileTimeout: "5m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   inputsFrom:
     - kind: ResourceSetInputProvider
@@ -20,7 +21,7 @@ spec:
       kind: OCIRepository
       metadata:
         name: reflector
-        namespace: flux-system
+        namespace: kube-system
       spec:
         interval: 1h
         layerSelector:
@@ -35,11 +36,12 @@ spec:
         name: reflector
         namespace: kube-system
       spec:
+        serviceAccountName: flux
         interval: 5m
         chartRef:
           kind: OCIRepository
           name: reflector
-          namespace: flux-system
+          namespace: kube-system
         install:
           createNamespace: false
           timeout: 10m0s

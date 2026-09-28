@@ -5,10 +5,11 @@ metadata:
   namespace: flux-system
   annotations:
     fluxcd.controlplane.io/reconcile: "enabled"
-    fluxcd.controlplane.io/reconcileEvery: "30m"
+    fluxcd.controlplane.io/reconcileEvery: "10m"
     fluxcd.controlplane.io/reconcileTimeout: "5m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   inputsFrom:
     - kind: ResourceSetInputProvider
@@ -20,7 +21,7 @@ spec:
       kind: OCIRepository
       metadata:
         name: cert-manager
-        namespace: flux-system
+        namespace: cert-manager
       spec:
         interval: 5m
         layerSelector:
@@ -35,15 +36,15 @@ spec:
         name: cert-manager
         namespace: cert-manager
       spec:
+        serviceAccountName: flux
         interval: 15m
         timeout: 5m
         maxHistory: 2
         chartRef:
           kind: OCIRepository
           name: cert-manager
-          namespace: flux-system
+          namespace: cert-manager
         install:
-          createNamespace: true
           timeout: 10m0s
           remediation:
             retries: 3

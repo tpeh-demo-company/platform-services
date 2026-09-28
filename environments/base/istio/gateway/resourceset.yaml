@@ -5,10 +5,11 @@ metadata:
   namespace: flux-system
   annotations:
     fluxcd.controlplane.io/reconcile: "enabled"
-    fluxcd.controlplane.io/reconcileEvery: "30m"
-    fluxcd.controlplane.io/reconcileTimeout: "5m"
+    fluxcd.controlplane.io/reconcileEvery: "5m"
+    fluxcd.controlplane.io/reconcileTimeout: "2m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   inputsFrom:
     - kind: ResourceSetInputProvider
@@ -41,10 +42,10 @@ spec:
         secretName: wildcard-tls
         duration: 2160h # 90 days
         renewBefore: 360h # 15 days
-        commonName: "demo-company.site"
+        commonName: "${CLUSTER_DOMAIN}"
         dnsNames:
-          - "demo-company.site"
-          - "*.demo-company.site"
+          - "${CLUSTER_DOMAIN}"
+          - "*.${CLUSTER_DOMAIN}"
         issuerRef:
           name: letsencrypt-production
           kind: ClusterIssuer
@@ -72,6 +73,8 @@ spec:
       metadata:
         name: gateway
         namespace: istio-system
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${CLUSTER_NAME}.${CLUSTER_DOMAIN}
       spec:
         gatewayClassName: istio
         infrastructure:
@@ -83,7 +86,7 @@ spec:
           - name: https
             port: 443
             protocol: HTTPS
-            hostname: "*.demo-company.site"
+            hostname: "*.${CLUSTER_DOMAIN}"
             tls:
               mode: Terminate
               certificateRefs:

@@ -5,10 +5,11 @@ metadata:
   namespace: flux-system
   annotations:
     fluxcd.controlplane.io/reconcile: "enabled"
-    fluxcd.controlplane.io/reconcileEvery: "30m"
+    fluxcd.controlplane.io/reconcileEvery: "10m"
     fluxcd.controlplane.io/reconcileTimeout: "5m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   inputsFrom:
     - kind: ResourceSetInputProvider
@@ -37,6 +38,7 @@ spec:
         name: gateway-api-crds
         namespace: flux-system
       spec:
+        serviceAccountName: flux-infra
         interval: 1h
         sourceRef:
           kind: GitRepository

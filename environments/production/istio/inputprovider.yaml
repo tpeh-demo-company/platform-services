@@ -1,0 +1,13 @@
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSetInputProvider
+metadata:
+  name: istio-production
+  namespace: flux-system
+  labels:
+    app: istio
+spec:
+  type: Static
+  defaultValues:
+    version: "1.30.3"
+    gatewayApiVersion: "v1.6.1"
+    kialiVersion: "2.30.0"

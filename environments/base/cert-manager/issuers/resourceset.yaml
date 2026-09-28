@@ -5,10 +5,11 @@ metadata:
   namespace: flux-system
   annotations:
     fluxcd.controlplane.io/reconcile: "enabled"
-    fluxcd.controlplane.io/reconcileEvery: "30m"
-    fluxcd.controlplane.io/reconcileTimeout: "5m"
+    fluxcd.controlplane.io/reconcileEvery: "5m"
+    fluxcd.controlplane.io/reconcileTimeout: "2m"
     fluxcd.controlplane.io/force: "true"
 spec:
+  serviceAccountName: flux-infra
   wait: true
   dependsOn:
     - apiVersion: fluxcd.controlplane.io/v1
@@ -34,7 +35,7 @@ spec:
                     key: api-token
               selector:
                 dnsZones:
-                  - demo-company.site
+                  - ${CLUSTER_DOMAIN}
     - apiVersion: cert-manager.io/v1
       kind: ClusterIssuer
       metadata:
@@ -52,6 +53,6 @@ spec:
                     key: api-token
               selector:
                 dnsZones:
-                  - demo-company.site
+                  - ${CLUSTER_DOMAIN}
 
 
